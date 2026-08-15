@@ -11,7 +11,7 @@
   :root{
     /* Core palette (as requested): light gray background, near-black text, blue buttons/links, red alerts */
     --bg: #f4c2c2;
-    --surface: #ffffff;
+    --surface: #fff9c4;
     --paper: #f2f2f2;
     --grey: #dcdcdc;
     --text: #1a1a1a;
@@ -49,7 +49,7 @@
   .wrap{max-width:880px;margin:0 auto;padding:24px 16px 60px;position:relative;}
   header.top{text-align:center;margin-bottom:22px;}
   header.top .eyebrow{display:inline-block;background:var(--blue);color:#fff;font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;padding:5px 14px;border-radius:999px;margin-bottom:8px;}
-  header.top h1{font-size:1.9rem;margin:6px 0 4px;font-weight:800;}
+  header.top h1{font-size:1.9rem;margin:6px 0 4px;font-weight:800;font-family:Georgia,'Times New Roman',serif;}
   header.top p{color:var(--text-soft);margin:0;font-size:.95rem;}
 
   .step-track{display:flex;justify-content:center;gap:6px;margin:0 0 22px;flex-wrap:wrap;}
@@ -59,7 +59,7 @@
 
   .panel{display:none;background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:26px 22px;}
   .panel.active{display:block;}
-  #panel-grade{background:#87ceeb;}
+  #panel-grade{background:#87ceeb;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;}
   #panel-grade .choice-card{background:#f5f5dc;}
 
   .choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:6px;}
@@ -159,14 +159,38 @@
 <div class="wrap">
   <header class="top">
     <span class="eyebrow">FOR GRADES 5-8</span>
-    <h1>Kids Quiz 🎓</h1>
+    <h1>Kids Quiz</h1>
     <p>Practice Math, Science &amp; English at your own pace!</p>
   </header>
 
   <div class="step-track" id="stepTrack"></div>
 
+  <!-- HOME -->
+  <section class="panel active" id="panel-home">
+    <h2>Fun Practice Quizzes for Grades 5–8</h2>
+    <p class="subtext" style="margin-top:6px;line-height:1.6;">
+      Welcome to <strong>Kids Quiz</strong>, a free interactive quiz website built for elementary students in Grades 5 to 8.
+      Whether it's Math, Science, or English, Kids Quiz makes it easy to practice, learn, and <strong>be sharper</strong> with every question.
+    </p>
+    <p class="subtext" style="line-height:1.6;">
+      Choose your grade, pick a subject, select a quiz length, and dive into a fresh set of shuffled questions every time.
+      Each quiz comes with instant feedback, a detailed results breakdown, and a full answer review — so students can see
+      exactly where they're strong and where they need a little more practice.
+    </p>
+    <p class="subtext" style="line-height:1.6;">
+      Kids Quiz is designed to be simple, self-guided, and mobile-friendly, so kids can practice anytime, anywhere —
+      no sign-up required. It's the perfect tool for after-school review, weekend brush-ups, or getting ready for a big test.
+    </p>
+    <p class="subtext" style="line-height:1.6;font-weight:600;">
+      More learning materials will be added soon.
+    </p>
+    <div class="back-row" style="text-align:center;margin-top:22px;">
+      <button class="action-btn" id="enterQuizBtn">Enter The Quiz →</button>
+    </div>
+  </section>
+
   <!-- STEP 1: GRADE -->
-  <section class="panel active" id="panel-grade">
+  <section class="panel" id="panel-grade">
     <h2>Choose Your Grade</h2>
     <div class="choice-grid">
       <div class="choice-card" data-grade="5"><span class="icon">5️⃣</span><h3>Grade 5</h3></div>
@@ -261,7 +285,7 @@ const SUBJECT_META = {
   science:{label:"Science", color:"var(--science-dark)", fill:"#35c48f", icon:"🔬"},
   english:{label:"English", color:"var(--english-dark)", fill:"#a06bff", icon:"📚"}
 };
-const STEPS = ["grade","subject","length","name","quiz","results"];
+const STEPS = ["home","grade","subject","length","name","quiz","results"];
 
 let state = { grade:null, subject:null, length:null, firstName:"", lastName:"" };
 let quizQuestions = [];
@@ -288,15 +312,21 @@ function showPanel(id){
 
 function renderStepTrack(current){
   const track = document.getElementById('stepTrack');
-  const idx = STEPS.indexOf(current);
   track.innerHTML = '';
-  STEPS.slice(0,4).forEach((s,i)=>{
+  if(current === 'home') return;
+  const flowSteps = ["grade","subject","length","name"];
+  let idx = flowSteps.indexOf(current);
+  if(idx === -1) idx = flowSteps.length; // quiz/results: show all steps as done
+  flowSteps.forEach((s,i)=>{
     const dot = document.createElement('div');
     dot.className = 'step-dot' + (i<idx?' done':'') + (i===idx?' active':'');
     dot.textContent = i+1;
     track.appendChild(dot);
   });
 }
+
+// HOME
+document.getElementById('enterQuizBtn').addEventListener('click', ()=>showPanel('grade'));
 
 // STEP 1: grade
 document.querySelectorAll('#panel-grade .choice-card').forEach(card=>{
@@ -461,9 +491,9 @@ function showResults(){
 
 document.getElementById('retryBtn').addEventListener('click', beginQuiz);
 document.getElementById('newQuizBtn').addEventListener('click', ()=>showPanel('subject'));
-document.getElementById('homeBtn').addEventListener('click', ()=>showPanel('grade'));
+document.getElementById('homeBtn').addEventListener('click', ()=>showPanel('home'));
 
-renderStepTrack('grade');
+renderStepTrack('home');
 </script>
 </body>
 </html>
