@@ -237,18 +237,6 @@
     <div class="back-row"><button class="ghost-btn" id="backToSubject">← Back</button></div>
   </section>
 
-  <!-- STEP 4: NAME -->
-  <section class="panel" id="panel-name">
-    <h2>Step 4: Tell Us Your Name</h2>
-    <p class="subtext">We'll use this on your results!</p>
-    <div class="name-form">
-      <input type="text" id="firstName" placeholder="First name" autocomplete="given-name">
-      <input type="text" id="lastName" placeholder="Last name" autocomplete="family-name">
-      <button class="action-btn" id="startQuizBtn">Start Quiz →</button>
-    </div>
-    <div class="back-row"><button class="ghost-btn" id="backToLength">← Back</button></div>
-  </section>
-
   <!-- QUIZ -->
   <section class="panel" id="panel-quiz">
     <div class="quiz-header">
@@ -300,7 +288,7 @@ const SUBJECT_META = {
 };
 const STEPS = ["home","grade","subject","length","name","quiz","results"];
 
-let state = { grade:null, subject:null, length:null, firstName:"", lastName:"" };
+let state = { grade:null, subject:null, length:null };
 let quizQuestions = [];
 let currentIndex = 0;
 let score = 0;
@@ -327,7 +315,7 @@ function renderStepTrack(current){
   const track = document.getElementById('stepTrack');
   track.innerHTML = '';
   if(current === 'home') return;
-  const flowSteps = ["grade","subject","length","name"];
+  const flowSteps = ["grade","subject","length"];
   let idx = flowSteps.indexOf(current);
   if(idx === -1) idx = flowSteps.length; // quiz/results: show all steps as done
   flowSteps.forEach((s,i)=>{
@@ -364,20 +352,10 @@ document.getElementById('backToGrade').addEventListener('click', ()=>showPanel('
 document.querySelectorAll('#panel-length .choice-card').forEach(card=>{
   card.addEventListener('click', ()=>{
     state.length = parseInt(card.dataset.length);
-    showPanel('name');
+    beginQuiz();
   });
 });
 document.getElementById('backToSubject').addEventListener('click', ()=>showPanel('subject'));
-
-// STEP 4: name
-document.getElementById('backToLength').addEventListener('click', ()=>showPanel('length'));
-document.getElementById('startQuizBtn').addEventListener('click', ()=>{
-  const fn = document.getElementById('firstName').value.trim();
-  const ln = document.getElementById('lastName').value.trim();
-  if(!fn || !ln){ alert("Please enter both your first and last name!"); return; }
-  state.firstName = fn; state.lastName = ln;
-  beginQuiz();
-});
 
 function beginQuiz(){
   const pool = QUIZ_DATA[state.subject][state.grade];
@@ -458,7 +436,8 @@ function showResults(){
   const total = quizQuestions.length;
   const pct = Math.round((score/total)*100);
 
-  document.getElementById('resultName').textContent = `${state.firstName} ${state.lastName} — Grade ${state.grade}`;
+  const meta = SUBJECT_META[state.subject];
+  document.getElementById('resultName').textContent = `${meta.icon} ${meta.label} — Grade ${state.grade}`;
   document.getElementById('resultScore').textContent = `${score} / ${total}`;
 
   let emoji, msg;
