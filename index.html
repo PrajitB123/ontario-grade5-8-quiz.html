@@ -494,7 +494,6 @@ function showResults(){
     topicStats[a.topic].total++;
     if(a.isCorrect) topicStats[a.topic].correct++;
   });
-  const meta = SUBJECT_META[state.subject];
   const chartEl = document.getElementById('topicChart');
   chartEl.innerHTML = '';
   Object.keys(topicStats).sort().forEach(topic=>{
